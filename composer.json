@@ -1,0 +1,35 @@
+{
+  "$schema": "https://getcomposer.org/schema.json",
+  "name": "eborio/laravel-responses",
+  "type": "project",
+  "description": "Unified responses format for Laravel projects",
+  "keywords": [
+    "laravel",
+    "responses",
+    "unified",
+    "format"
+  ],
+  "license": "MIT",
+  "require": {
+    "php": "^8.2",
+    "eborio/laravel-gettext": "^8.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Eborio\\LaravelResponses\\": "src/LaravelResponses/"
+    },
+    "files": [
+      "app/Core/helpers.php"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "dont-discover": [],
+      "providers": [
+        "Eborio\\LaravelResponses\\ServiceProvider"
+      ]
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
