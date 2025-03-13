@@ -17,10 +17,7 @@
   "autoload": {
     "psr-4": {
       "Eborio\\LaravelResponses\\": "src/LaravelResponses/"
-    },
-    "files": [
-      "app/Core/helpers.php"
-    ]
+    }
   },
   "extra": {
     "laravel": {
