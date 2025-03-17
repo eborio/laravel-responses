@@ -62,7 +62,7 @@ class Responses implements Responsable
      * @param string $errorMessage
      * @return static
      */
-    public static function failed(string $errorMessage = 'Item not found'): static
+    public static function failed(string $errorMessage = 'Server error'): static
     {
         return new static(Codes::NOT_FOUND->value, errorMessage: $errorMessage);
     }
