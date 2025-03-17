@@ -44,8 +44,7 @@ class Responses implements Responsable
     public function toResponse($request): JsonResponse
     {
         $payload = match (true) {
-            $this->httpCode >= 500 => ['error_message' => 'Server error'],
-            $this->httpCode >= 400 => ['error_message' => $this->errorMessage],
+            $this->httpCode >= 400 => ['error_message' => $this->errorMessage, 'data' => $this->data],
             $this->httpCode >= 200 => ['data' => $this->data],
         };
 
