@@ -120,6 +120,6 @@ class Responses implements Responsable
      */
     public static function validationErrors(array $data, string $errorMessage = 'Incomplete form'): static
     {
-        return new static(Codes::NOT_FOUND->value, $data, errorMessage: $errorMessage);
+        return new static(Codes::VALIDATION_ERRORS->value, $data, errorMessage: $errorMessage);
     }
 }
