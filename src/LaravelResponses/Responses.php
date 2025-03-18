@@ -63,7 +63,7 @@ class Responses implements Responsable
      */
     public static function failed(string $errorMessage = 'Server error'): static
     {
-        return new static(Codes::NOT_FOUND->value, errorMessage: $errorMessage);
+        return new static(Codes::FAILED->value, errorMessage: $errorMessage);
     }
 
     /**
