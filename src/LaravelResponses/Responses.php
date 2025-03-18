@@ -69,12 +69,13 @@ class Responses implements Responsable
     /**
      * Forbidden response
      *
+     * @param array $data
      * @param string $errorMessage
      * @return static
      */
-    public static function forbidden(string $errorMessage = 'Forbidden resource'): static
+    public static function forbidden(array $data, string $errorMessage = 'Forbidden resource'): static
     {
-        return new static(Codes::FORBIDDEN->value, errorMessage: $errorMessage);
+        return new static(Codes::FORBIDDEN->value, $data, errorMessage: $errorMessage);
     }
 
     /**
