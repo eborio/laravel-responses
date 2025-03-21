@@ -60,10 +60,11 @@ class Responses implements Responsable
     /**
      * Failed response
      *
+     * @param array $data
      * @param string $errorMessage
      * @return static
      */
-    public static function failed(string $errorMessage = 'Server error'): static
+    public static function failed(array $data = [], string $errorMessage = 'Server error'): static
     {
         return new static(Codes::FAILED->value, errorMessage: $errorMessage);
     }
@@ -75,7 +76,7 @@ class Responses implements Responsable
      * @param string $errorMessage
      * @return static
      */
-    public static function forbidden(array $data, string $errorMessage = 'Forbidden resource'): static
+    public static function forbidden(array $data = [], string $errorMessage = 'Forbidden resource'): static
     {
         return new static(Codes::FORBIDDEN->value, $data, errorMessage: $errorMessage);
     }
@@ -83,10 +84,11 @@ class Responses implements Responsable
     /**
      * Not found response
      *
+     * @param array $data
      * @param string $errorMessage
      * @return static
      */
-    public static function notFound(string $errorMessage = 'Item not found'): static
+    public static function notFound(array $data = [], string $errorMessage = 'Item not found'): static
     {
         return new static(Codes::NOT_FOUND->value, errorMessage: $errorMessage);
     }
@@ -105,10 +107,11 @@ class Responses implements Responsable
     /**
      * Unauthenticated response
      *
+     * @param array $data
      * @param string $errorMessage
      * @return static
      */
-    public static function unauthenticated(string $errorMessage = 'Unauthenticated user'): static
+    public static function unauthenticated(array $data = [], string $errorMessage = 'Unauthenticated user'): static
     {
         return new static(Codes::UNAUTHENTICATED->value, errorMessage: $errorMessage);
     }
@@ -120,7 +123,7 @@ class Responses implements Responsable
      * @param string $errorMessage
      * @return static
      */
-    public static function validationErrors(array $data, string $errorMessage = 'Incomplete form'): static
+    public static function validationErrors(array $data = [], string $errorMessage = 'Incomplete form'): static
     {
         return new static(Codes::VALIDATION_ERRORS->value, $data, errorMessage: $errorMessage);
     }
