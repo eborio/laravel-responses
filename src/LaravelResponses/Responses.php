@@ -90,7 +90,7 @@ class Responses implements Responsable
      */
     public static function notFound(array $data = [], string $errorMessage = 'Item not found'): static
     {
-        return new static(Codes::NOT_FOUND->value, errorMessage: $errorMessage);
+        return new static(Codes::NOT_FOUND->value, $data, errorMessage: $errorMessage);
     }
 
     /**
