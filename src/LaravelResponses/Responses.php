@@ -12,27 +12,29 @@ class Responses implements Responsable
      * @var int
      */
     protected int $httpCode;
+
     /**
      * @var array
      */
     protected array $data;
+
     /**
      * @var string
      */
-    protected string $errorMessage;
+    protected string $title;
 
     /**
      * Responses constructor
      *
      * @param int $httpCode
      * @param array $data
-     * @param string $errorMessage
+     * @param string $title
      */
-    public function __construct(int $httpCode, array $data = [], string $errorMessage = '')
+    public function __construct(int $httpCode, array $data = [], string $title = '')
     {
         $this->httpCode = $httpCode;
         $this->data = $data;
-        $this->errorMessage = $errorMessage;
+        $this->title = $title;
     }
 
     /**
@@ -43,11 +45,11 @@ class Responses implements Responsable
      */
     public function toResponse($request): JsonResponse
     {
-        $message =  $this->data['title'] ?? $this->errorMessage;
+        $title =  $this->data['title'] ?? $this->title;
         $payload = ['data' => $this->data];
 
         if ($this->httpCode >= 400) {
-            $payload = array_merge($payload, ['error_message' => $message]);
+            $payload = array_merge($payload, ['title' => $title]);
         }
 
         return response()->json(
@@ -61,36 +63,36 @@ class Responses implements Responsable
      * Failed response
      *
      * @param array $data
-     * @param string $errorMessage
+     * @param string $title
      * @return static
      */
-    public static function failed(array $data = [], string $errorMessage = 'Server error'): static
+    public static function failed(array $data = [], string $title = 'Server error'): static
     {
-        return new static(Codes::FAILED->value, errorMessage: $errorMessage);
+        return new static(Codes::FAILED->value, title: $title);
     }
 
     /**
      * Forbidden response
      *
      * @param array $data
-     * @param string $errorMessage
+     * @param string $title
      * @return static
      */
-    public static function forbidden(array $data = [], string $errorMessage = 'Forbidden resource'): static
+    public static function forbidden(array $data = [], string $title = 'Forbidden resource'): static
     {
-        return new static(Codes::FORBIDDEN->value, $data, errorMessage: $errorMessage);
+        return new static(Codes::FORBIDDEN->value, $data, title: $title);
     }
 
     /**
      * Not found response
      *
      * @param array $data
-     * @param string $errorMessage
+     * @param string $title
      * @return static
      */
-    public static function notFound(array $data = [], string $errorMessage = 'Item not found'): static
+    public static function notFound(array $data = [], string $title = 'Item not found'): static
     {
-        return new static(Codes::NOT_FOUND->value, $data, errorMessage: $errorMessage);
+        return new static(Codes::NOT_FOUND->value, $data, title: $title);
     }
 
     /**
@@ -108,23 +110,23 @@ class Responses implements Responsable
      * Unauthenticated response
      *
      * @param array $data
-     * @param string $errorMessage
+     * @param string $title
      * @return static
      */
-    public static function unauthenticated(array $data = [], string $errorMessage = 'Unauthenticated user'): static
+    public static function unauthenticated(array $data = [], string $title = 'Unauthenticated user'): static
     {
-        return new static(Codes::UNAUTHENTICATED->value, errorMessage: $errorMessage);
+        return new static(Codes::UNAUTHENTICATED->value, title: $title);
     }
 
     /**
      * Validation errors
      *
      * @param array $data
-     * @param string $errorMessage
+     * @param string $title
      * @return static
      */
-    public static function validationErrors(array $data = [], string $errorMessage = 'Incomplete form'): static
+    public static function validationErrors(array $data = [], string $title = 'Incomplete form'): static
     {
-        return new static(Codes::VALIDATION_ERRORS->value, $data, errorMessage: $errorMessage);
+        return new static(Codes::VALIDATION_ERRORS->value, $data, title: $title);
     }
 }
