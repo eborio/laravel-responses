@@ -45,12 +45,8 @@ class Responses implements Responsable
      */
     public function toResponse($request): JsonResponse
     {
-        $title =  $this->data['title'] ?? $this->title;
+        $this->data['title'] = $this->data['title'] ?? $this->title;
         $payload = ['data' => $this->data];
-
-        if ($this->httpCode >= 400) {
-            $payload = array_merge($payload, ['title' => $title]);
-        }
 
         return response()->json(
             data: $payload,
