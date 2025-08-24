@@ -219,3 +219,17 @@ composer test
 
 See `CHANGELOG.md` for notable changes and release notes.
 
+## Release v1.0.0 — 2025-08-24
+
+The first stable release of `laravel-responses`. Highlights:
+
+- Standardized JSON payload format: `status`, `code`, `message`, `data`.
+- Global helper functions and ResponseFactory macros for convenience.
+- Config file at `config/laravel-responses.php` for defaults and JSON options.
+- PHPUnit tests and basic test coverage included.
+- Improved PHPDocBlocks and clearer enum documentation.
+- Designed to be usable in tests without bootstrapping a full Laravel container.
+
+Full release notes are available on the project's releases page:
+https://github.com/eborio/laravel-responses/releases/tag/v1.0.0
+

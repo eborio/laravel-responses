@@ -2,3 +2,5 @@
 composer.lock
 .idea/
 .DS_Store
+.github
+.phpunit.result.cache
