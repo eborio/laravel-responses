@@ -6,123 +6,194 @@ use Eborio\LaravelResponses\Enums\Codes;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\JsonResponse;
 
+/**
+ * Class Responses
+ *
+ * Build standardized JSON API responses that implement the Laravel
+ * Responsable contract. The response payload follows the package
+ * convention: [status, code, message, data].
+ */
 class Responses implements Responsable
 {
     /**
-     * @var int
+     * HTTP status represented as a {@see Codes} enum instance.
+     *
+     * @var Codes
      */
-    protected int $httpCode;
+    protected Codes $httpCode;
 
     /**
+     * Response data payload. If the array contains a "title" key it
+     * will be used as the message and removed from the data section.
+     *
      * @var array
      */
     protected array $data;
 
     /**
+     * Message title to expose as the response message.
+     *
      * @var string
      */
     protected string $title;
 
     /**
-     * Responses constructor
+     * Create a new Responses instance.
      *
-     * @param int $httpCode
-     * @param array $data
-     * @param string $title
+     * Accepts either an integer HTTP status code or a {@see Codes}
+     * enum case. The provided data and title are stored and used when
+     * building the final JSON payload.
+     *
+     * @param int|Codes $httpCode HTTP status code or Codes enum case
+     * @param array $data Response payload data
+     * @param string $title Optional message title
      */
-    public function __construct(int $httpCode, array $data = [], string $title = '')
+    public function __construct(int|Codes $httpCode, array $data = [], string $title = '')
     {
-        $this->httpCode = $httpCode;
+        $this->httpCode = $httpCode instanceof Codes ? $httpCode : Codes::from($httpCode);
         $this->data = $data;
         $this->title = $title;
     }
 
     /**
-     * Response format
+     * Create a server error response instance.
      *
-     * @param $request
-     * @return JsonResponse
-     */
-    public function toResponse($request): JsonResponse
-    {
-        $this->data['title'] = $this->data['title'] ?? $this->title;
-        $payload = ['data' => $this->data];
-
-        return response()->json(
-            data: $payload,
-            status: $this->httpCode,
-            options: JSON_UNESCAPED_UNICODE
-        );
-    }
-
-    /**
-     * Failed response
+     * This returns a {@see Responses} pre-configured with the
+     * {@see Codes::FAILED} HTTP code.
      *
-     * @param array $data
-     * @param string $title
-     * @return static
+     * @param array $data Optional payload data
+     * @param string $title Optional message title
+     * @return static A Responses instance configured as an error
      */
     public static function failed(array $data = [], string $title = 'Server error'): static
     {
-        return new static(Codes::FAILED->value, title: $title);
+        return new static(Codes::FAILED, $data, $title);
     }
 
     /**
-     * Forbidden response
+     * Create a forbidden response instance.
      *
-     * @param array $data
-     * @param string $title
-     * @return static
+     * Returns a {@see Responses} configured with the
+     * {@see Codes::FORBIDDEN} status.
+     *
+     * @param array $data Optional payload data
+     * @param string $title Optional message title
+     * @return static A Responses instance configured as forbidden
      */
     public static function forbidden(array $data = [], string $title = 'Forbidden resource'): static
     {
-        return new static(Codes::FORBIDDEN->value, $data, title: $title);
+        return new static(Codes::FORBIDDEN, $data, $title);
     }
 
     /**
-     * Not found response
+     * Create a not found response instance.
      *
-     * @param array $data
-     * @param string $title
-     * @return static
+     * Returns a {@see Responses} configured with the
+     * {@see Codes::NOT_FOUND} status.
+     *
+     * @param array $data Optional payload data
+     * @param string $title Optional message title
+     * @return static A Responses instance configured as not found
      */
     public static function notFound(array $data = [], string $title = 'Item not found'): static
     {
-        return new static(Codes::NOT_FOUND->value, $data, title: $title);
+        return new static(Codes::NOT_FOUND, $data, $title);
     }
 
     /**
-     * OK response
+     * Create a successful (OK) response instance.
      *
-     * @param array $data
-     * @return static
+     * Returns a {@see Responses} configured with the {@see Codes::OK}
+     * HTTP status.
+     *
+     * @param array $data Payload data to include in the response
+     * @return static A Responses instance configured as OK
      */
     public static function ok(array $data): static
     {
-        return new static(Codes::OK->value, $data);
+        return new static(Codes::OK, $data);
     }
 
     /**
-     * Unauthenticated response
+     * Build the response payload as an array.
      *
-     * @param array $data
-     * @param string $title
-     * @return static
+     * The resulting array follows the package schema and is intentionally
+     * produced without relying on Laravel helpers to make it testable in
+     * isolation.
+     *
+     * @return array The final JSON serializable payload
+     */
+    protected function toArray(): array
+    {
+        $message = $this->data['title'] ?? $this->title;
+
+        $payloadData = $this->data['payload'] ?? $this->data;
+
+        if (is_array($payloadData) && array_key_exists('title', $payloadData)) {
+            unset($payloadData['title']);
+        }
+
+        return [
+            'status' => $this->httpCode->toStatus()->value,
+            'code' => $this->httpCode->value,
+            'message' => $message,
+            'data' => $payloadData,
+        ];
+    }
+
+    /**
+     * Convert the response to a Laravel JsonResponse.
+     *
+     * This method implements the {@see Responsable} contract so
+     * the object can be returned directly from controllers. It
+     * attempts to read JSON encoding options from configuration but
+     * falls back to a safe default when the config helper is not
+     * available (for example, in isolated tests).
+     *
+     * @param mixed $request The incoming request instance (unused)
+     * @return JsonResponse The HTTP JSON response
+     */
+    public function toResponse($request): JsonResponse
+    {
+        $payload = $this->toArray();
+
+        try {
+            $options = config('laravel-responses.json_options', JSON_UNESCAPED_UNICODE);
+        } catch (\Throwable $e) {
+            $options = JSON_UNESCAPED_UNICODE;
+        }
+
+        return new JsonResponse($payload, $this->httpCode->value, [], $options);
+    }
+
+    /**
+     * Create an unauthenticated response instance.
+     *
+     * Returns a {@see Responses} configured with the
+     * {@see Codes::UNAUTHENTICATED} status.
+     *
+     * @param array $data Optional payload data
+     * @param string $title Optional message title
+     * @return static A Responses instance configured as unauthenticated
      */
     public static function unauthenticated(array $data = [], string $title = 'Unauthenticated user'): static
     {
-        return new static(Codes::UNAUTHENTICATED->value, title: $title);
+        return new static(Codes::UNAUTHENTICATED, $data, $title);
     }
 
     /**
-     * Validation errors
+     * Create a validation errors response instance.
      *
-     * @param array $data
-     * @param string $title
-     * @return static
+     * Returns a {@see Responses} configured with the
+     * {@see Codes::VALIDATION_ERRORS} status and the provided
+     * validation payload.
+     *
+     * @param array $data Validation errors or payload data
+     * @param string $title Optional message title
+     * @return static A Responses instance configured for validation errors
      */
     public static function validationErrors(array $data = [], string $title = 'Incomplete form'): static
     {
-        return new static(Codes::VALIDATION_ERRORS->value, $data, title: $title);
+        return new static(Codes::VALIDATION_ERRORS, $data, $title);
     }
 }
