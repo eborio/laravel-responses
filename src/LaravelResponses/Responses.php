@@ -138,6 +138,10 @@ class Responses implements Responsable
         $message = $this->data['message'] ?? $this->message;
         $payloadData = $this->data['payload'] ?? $this->data;
 
+        if (is_array($payloadData) && array_key_exists('message', $payloadData)) {
+            unset($payloadData['message']);
+        }
+
         return [
             'status' => $this->httpCode->toStatus()->value,
             'code' => $this->httpCode->value,
