@@ -1,5 +1,7 @@
 <?php
 
+use Eborio\LaravelResponses\Enums\Codes;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -25,20 +27,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default titles
+    | Default messages
     |--------------------------------------------------------------------------
     |
-    | Default human friendly titles/messages for common HTTP codes. These
+    | Default human friendly messages for common HTTP codes. These
     | values are fallbacks and can be overridden when calling the helpers.
     |
     */
-    'default_titles' => [
-        200 => 'OK',
-        401 => 'Unauthenticated user',
-        403 => 'Forbidden resource',
-        404 => 'Item not found',
-        422 => 'Incomplete form',
-        500 => 'Server error',
-        503 => 'Maintenance',
+    'default_messages' => [
+        Codes::OK->value => Codes::OK->getFriendlyName(),
+        Codes::UNAUTHENTICATED->value => Codes::UNAUTHENTICATED->getFriendlyName(),
+        Codes::FORBIDDEN->value => Codes::FORBIDDEN->getFriendlyName(),
+        Codes::NOT_FOUND->value => Codes::NOT_FOUND->getFriendlyName(),
+        Codes::VALIDATION_ERRORS->value => Codes::VALIDATION_ERRORS->getFriendlyName(),
+        Codes::FAILED->value => Codes::FAILED->getFriendlyName(),
+        Codes::MAINTENANCE->value => Codes::MAINTENANCE->getFriendlyName(),
     ],
 ];

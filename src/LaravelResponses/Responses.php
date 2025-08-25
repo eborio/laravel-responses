@@ -10,7 +10,7 @@ use Illuminate\Http\JsonResponse;
  * Class Responses
  *
  * Build standardized JSON API responses that implement the Laravel
- * Responsable contract. The response payload follows the package
+ * Responsible contract. The response payload follows the package
  * convention: [status, code, message, data].
  */
 class Responses implements Responsable
@@ -23,7 +23,7 @@ class Responses implements Responsable
     protected Codes $httpCode;
 
     /**
-     * Response data payload. If the array contains a "title" key it
+     * Response data payload. If the array contains a "message" key it
      * will be used as the message and removed from the data section.
      *
      * @var array
@@ -31,28 +31,38 @@ class Responses implements Responsable
     protected array $data;
 
     /**
-     * Message title to expose as the response message.
+     * Message to expose as the response message.
      *
      * @var string
      */
-    protected string $title;
+    protected string $message;
 
     /**
      * Create a new Responses instance.
      *
      * Accepts either an integer HTTP status code or a {@see Codes}
-     * enum case. The provided data and title are stored and used when
+     * enum case. The provided data and message are stored and used when
      * building the final JSON payload.
      *
      * @param int|Codes $httpCode HTTP status code or Codes enum case
      * @param array $data Response payload data
-     * @param string $title Optional message title
+     * @param string $message Optional message
      */
-    public function __construct(int|Codes $httpCode, array $data = [], string $title = '')
+    public function __construct(int|Codes $httpCode, array $data = [], string $message = '')
     {
         $this->httpCode = $httpCode instanceof Codes ? $httpCode : Codes::from($httpCode);
         $this->data = $data;
-        $this->title = $title;
+        if ($message === '') {
+            try {
+                $defaultMessages = config('laravel-responses.default_messages', []);
+                $code = $this->httpCode->value;
+                $this->message = $defaultMessages[$code] ?? $this->httpCode->getFriendlyName();
+            } catch (\Throwable $e) {
+                $this->message = $this->httpCode->getFriendlyName();
+            }
+        } else {
+            $this->message = $message;
+        }
     }
 
     /**
@@ -62,12 +72,12 @@ class Responses implements Responsable
      * {@see Codes::FAILED} HTTP code.
      *
      * @param array $data Optional payload data
-     * @param string $title Optional message title
+     * @param string $message Optional message
      * @return static A Responses instance configured as an error
      */
-    public static function failed(array $data = [], string $title = 'Server error'): static
+    public static function failed(array $data = [], string $message = 'Server error'): static
     {
-        return new static(Codes::FAILED, $data, $title);
+        return new static(Codes::FAILED, $data, $message);
     }
 
     /**
@@ -77,12 +87,12 @@ class Responses implements Responsable
      * {@see Codes::FORBIDDEN} status.
      *
      * @param array $data Optional payload data
-     * @param string $title Optional message title
+     * @param string $message Optional message
      * @return static A Responses instance configured as forbidden
      */
-    public static function forbidden(array $data = [], string $title = 'Forbidden resource'): static
+    public static function forbidden(array $data = [], string $message = 'Forbidden resource'): static
     {
-        return new static(Codes::FORBIDDEN, $data, $title);
+        return new static(Codes::FORBIDDEN, $data, $message);
     }
 
     /**
@@ -92,12 +102,12 @@ class Responses implements Responsable
      * {@see Codes::NOT_FOUND} status.
      *
      * @param array $data Optional payload data
-     * @param string $title Optional message title
+     * @param string $message Optional message
      * @return static A Responses instance configured as not found
      */
-    public static function notFound(array $data = [], string $title = 'Item not found'): static
+    public static function notFound(array $data = [], string $message = 'Item not found'): static
     {
-        return new static(Codes::NOT_FOUND, $data, $title);
+        return new static(Codes::NOT_FOUND, $data, $message);
     }
 
     /**
@@ -125,13 +135,8 @@ class Responses implements Responsable
      */
     protected function toArray(): array
     {
-        $message = $this->data['title'] ?? $this->title;
-
+        $message = $this->data['message'] ?? $this->message;
         $payloadData = $this->data['payload'] ?? $this->data;
-
-        if (is_array($payloadData) && array_key_exists('title', $payloadData)) {
-            unset($payloadData['title']);
-        }
 
         return [
             'status' => $this->httpCode->toStatus()->value,
@@ -173,12 +178,12 @@ class Responses implements Responsable
      * {@see Codes::UNAUTHENTICATED} status.
      *
      * @param array $data Optional payload data
-     * @param string $title Optional message title
+     * @param string $message Optional message
      * @return static A Responses instance configured as unauthenticated
      */
-    public static function unauthenticated(array $data = [], string $title = 'Unauthenticated user'): static
+    public static function unauthenticated(array $data = [], string $message = 'Unauthenticated user'): static
     {
-        return new static(Codes::UNAUTHENTICATED, $data, $title);
+        return new static(Codes::UNAUTHENTICATED, $data, $message);
     }
 
     /**
@@ -189,11 +194,11 @@ class Responses implements Responsable
      * validation payload.
      *
      * @param array $data Validation errors or payload data
-     * @param string $title Optional message title
+     * @param string $message Optional message title
      * @return static A Responses instance configured for validation errors
      */
-    public static function validationErrors(array $data = [], string $title = 'Incomplete form'): static
+    public static function validationErrors(array $data = [], string $message = 'Incomplete form'): static
     {
-        return new static(Codes::VALIDATION_ERRORS, $data, $title);
+        return new static(Codes::VALIDATION_ERRORS, $data, $message);
     }
 }

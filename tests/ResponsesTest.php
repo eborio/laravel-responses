@@ -33,4 +33,19 @@ class ResponsesTest extends TestCase
 
     $this->assertSame(Codes::FAILED->value, $payload['code']);
     }
+
+    public function test_default_message_is_used_when_none_provided()
+    {
+        $response = Responses::notFound(['foo' => 'bar'])->toResponse(null);
+        $payload = json_decode($response->getContent(), true);
+        $this->assertSame('Item not found', $payload['message']);
+    }
+
+    public function test_custom_message_overrides_default()
+    {
+        $customMessage = 'Custom not found';
+        $response = Responses::notFound(['foo' => 'bar'], $customMessage)->toResponse(null);
+        $payload = json_decode($response->getContent(), true);
+        $this->assertSame($customMessage, $payload['message']);
+    }
 }

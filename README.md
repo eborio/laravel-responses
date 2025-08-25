@@ -1,23 +1,18 @@
-
 # Laravel Responses
 
 Unified JSON response helper for Laravel projects.
 
-This package provides a small, framework-friendly API to build
-consistent JSON responses across your application. It exposes:
+This package provides a small, framework-friendly API to build consistent JSON responses across your application. It exposes:
 
 - Global helper functions (helpers)
 - ResponseFactory macros (when Laravel's response factory is present)
-- A central {@see \Eborio\LaravelResponses\Responses} class with
-	static factory methods for common response patterns
+- A central {@see \Eborio\LaravelResponses\Responses} class with static factory methods for common response patterns
 
-All example code in this README assumes you will pass translated
-message titles from your application code (do not call translation
-helpers from inside the package).
+All example code in this README assumes you will pass translated messages from your application code (do not call translation helpers from inside the package).
 
 ## Installation
 
-Install the package via Composer (replace the package name if needed):
+Install the package via Composer:
 
 ```bash
 composer require eborio/laravel-responses
@@ -26,210 +21,54 @@ composer require eborio/laravel-responses
 Optionally publish the configuration file:
 
 ```bash
-php artisan vendor:publish --provider="Eborio\LaravelResponses\ServiceProvider" --tag="config"
+php artisan vendor:publish --provider='Eborio\LaravelResponses\ServiceProvider' --tag='config'
 ```
 
 ## Quick usage
 
-Below are the common ways to create responses using macros, helpers
-and the static methods provided by the `Responses` class.
+Below are the common ways to create responses using macros, helpers and the static methods provided by the `Responses` class.
 
 ### Helpers (global functions)
 
-The package exposes small helper functions that return a
-`\Eborio\LaravelResponses\Responses` instance. Helpers are useful in
-routes and controllers for short, readable code:
+The package exposes small helper functions that return a `\Eborio\LaravelResponses\Responses` instance. Helpers are useful in routes and controllers for short, readable code:
 
 ```php
 // return JSON 200
 return laravel_responses_ok(['user' => $user]);
 
-// return JSON 422 with a custom title (already translated by caller)
-return laravel_responses_validation_errors(['errors' => $errors], _i('Please check the form'));
+// return JSON 422 with a custom message
+return laravel_responses_validation_errors(['errors' => $errors], 'Please check the form');
 ```
 
-Helper names are alphabetical and follow the pattern
-`laravel_responses_{action}` (for example: `laravel_responses_ok`).
+Helper names are alphabetical and follow the pattern `laravel_responses_{action}` (for example: `laravel_responses_ok`).
 
 ### ResponseFactory macros
 
-When Laravel's `Illuminate\Contracts\Routing\ResponseFactory` is
-available, the package registers macros so you can use the familiar
-`response()` helper in a fluent way:
+When Laravel's `Illuminate\Contracts\Routing\ResponseFactory` is available, the package registers macros so you can use the familiar `response()` helper in a fluent way:
 
 ```php
 // returns the same as laravel_responses_ok([...])
-return response()->ok(['foo' => 'bar']);
-
-// other macros: failed(), forbidden(), notFound(), unauthenticated(), validationErrors()
+response()->laravel_responses_ok(['user' => $user]);
 ```
 
-Macros are registered conditionally to avoid errors in non-Laravel
-environments or during isolated unit tests.
+### Default messages
 
-### Static factory methods
+Default messages for HTTP codes are now generated automatically from the enum case name using the `getFriendlyName()` method. The configuration file uses `Codes::getFriendlyName()` to populate the `default_messages` array. The `Responses` class will use the configured message if available, or fallback to the enum's friendly name.
 
-You can also use the central `Responses` static methods directly:
+You can override these defaults by passing a custom message.
 
 ```php
-use Eborio\LaravelResponses\Responses;
+// Uses the default message for 404 from Codes enum
+return laravel_responses_not_found();
 
-return Responses::ok(['data' => $payload]);
-
-return Responses::failed([], _i('Unexpected server error'));
+// Uses a custom message
+return laravel_responses_not_found([], 'Custom not found message');
 ```
-
-## Available helpers, macros and static methods
-
-This section lists the helpers, response factory macros and static
-methods provided by the package so you can quickly discover the
-available API surface.
-
-### Helpers (global functions)
-
-All helper functions return a `\Illuminate\Http\JsonResponse` and are
-safe to call from routes and controllers. Helpers are autoloaded from
-the package `helpers.php` file.
-
-- `laravel_responses_failed(array $data = [], string $title = '')`
-	- Return a 500 server error response.
-- `laravel_responses_forbidden(array $data = [], string $title = '')`
-	- Return a 403 forbidden response.
-- `laravel_responses_not_found(array $data = [], string $title = '')`
-	- Return a 404 not found response.
-- `laravel_responses_ok(array $data = [], string $title = '')`
-	- Return a 200 OK response.
-- `laravel_responses_unauthenticated(array $data = [], string $title = '')`
-	- Return a 401 unauthenticated response.
-- `laravel_responses_validation_errors(array $data = [], string $title = '')`
-	- Return a 422 validation errors response.
-
-Example (helpers):
-
-```php
-return laravel_responses_ok(['user' => $user]);
-```
-
-### ResponseFactory macros
-
-When the framework response factory is present the provider registers
-the following macros on `response()` so you can write `response()->ok(...)`:
-
-- `ok(array $data = [], string $title = '')`
-- `failed(array $data = [], string $title = '')`
-- `forbidden(array $data = [], string $title = '')`
-- `notFound(array $data = [], string $title = '')`
-- `unauthenticated(array $data = [], string $title = '')`
-- `validationErrors(array $data = [], string $title = '')`
-
-Example (macro):
-
-```php
-return response()->validationErrors(['errors' => $errors], _i('Please check the form'));
-```
-
-### Responses static methods
-
-The main `Responses` class exposes a set of static factory methods that
-return configured `Responses` instances. You can use them directly and
-call `toResponse()` or return the instance from a controller (it is
-`Responsable`).
-
-- `Responses::ok(array $data): Responses` — successful (200) response.
-- `Responses::failed(array $data = [], string $title = 'Server error'): Responses` — server error (500).
-- `Responses::forbidden(array $data = [], string $title = 'Forbidden resource'): Responses` — 403 forbidden.
-- `Responses::notFound(array $data = [], string $title = 'Item not found'): Responses` — 404 not found.
-- `Responses::unauthenticated(array $data = [], string $title = 'Unauthenticated user'): Responses` — 401 unauthenticated.
-- `Responses::validationErrors(array $data = [], string $title = 'Incomplete form'): Responses` — 422 validation errors.
-
-Example (static method):
-
-```php
-use Eborio\LaravelResponses\Responses;
-
-return Responses::forbidden([], _i('You do not have access'));
-```
-
-## Response payload format
-
-All responses follow the same JSON structure:
-
-```json
-{
-	"status": "ok|failed|error",
-	"code": 200,
-	"message": "A short message or title",
-	"data": { /* payload */ }
-}
-```
-
-The `status` value is derived from the HTTP code and represented by the
-package `Status` enum. The `code` is the numeric HTTP status code.
-
-If you pass an array with a `title` key inside the data payload, that
-title will become the `message` and will be removed from the `data`
-section in the final payload.
 
 ## Configuration
 
-The package ships with a `config/laravel-responses.php` file that
-allows you to change JSON encoding options and default titles. After
-publishing the config you can set options like `json_options`.
+The configuration file allows you to customize default messages, JSON options, and other behaviors. See `config/laravel-responses.php` for details.
 
-## Testing
+## License
 
-The package includes PHPUnit tests. To run them locally:
-
-```bash
-composer install --dev
-vendor/bin/phpunit
-```
-
-When writing tests for code that uses `Responses`, prefer asserting on
-the produced array payload by calling the `toArray()` method on the
-instance (or by returning the `Responses` object and asserting the
-`JsonResponse` content in integration tests).
-
-Example assertion using PHPUnit:
-
-```php
-use Eborio\LaravelResponses\Responses;
-
-$response = Responses::ok(['user' => ['id' => 1, 'name' => 'Alice']]);
-$payload = $response->toArray();
-
-$this->assertSame('ok', $payload['status']);
-$this->assertSame(200, $payload['code']);
-```
-
-## Contributing
-
-Contributions are welcome. Please follow the repository coding
-standards: English code + docblocks, descriptive PHPDocBlocks, and
-alphabetical ordering for helper functions.
-
-Before submitting a pull request, run:
-
-```bash
-composer install
-composer test
-```
-
-## Changelog
-
-See `CHANGELOG.md` for notable changes and release notes.
-
-## Release v1.0.0 — 2025-08-24
-
-The first stable release of `laravel-responses`. Highlights:
-
-- Standardized JSON payload format: `status`, `code`, `message`, `data`.
-- Global helper functions and ResponseFactory macros for convenience.
-- Config file at `config/laravel-responses.php` for defaults and JSON options.
-- PHPUnit tests and basic test coverage included.
-- Improved PHPDocBlocks and clearer enum documentation.
-- Designed to be usable in tests without bootstrapping a full Laravel container.
-
-Full release notes are available on the project's releases page:
-https://github.com/eborio/laravel-responses/releases/tag/v1.0.0
-
+MIT

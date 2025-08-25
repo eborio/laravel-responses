@@ -58,4 +58,14 @@ enum Codes: int
     {
         return self::statusFromHttpCode($this->value);
     }
+
+    /**
+     * Returns a human-friendly label for the enum case.
+     *
+     * @return string Friendly label for the response code (e.g. 'Ok', 'Not Found')
+     */
+    public function getFriendlyName(): string
+    {
+        return ucwords(str_replace('_', ' ', strtolower($this->name)));
+    }
 }
