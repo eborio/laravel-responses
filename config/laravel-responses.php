@@ -36,11 +36,11 @@ return [
     */
     'default_messages' => [
         Codes::OK->value => Codes::OK->getFriendlyName(),
-        Codes::UNAUTHENTICATED->value => Codes::UNAUTHENTICATED->getFriendlyName(),
-        Codes::FORBIDDEN->value => Codes::FORBIDDEN->getFriendlyName(),
-        Codes::NOT_FOUND->value => Codes::NOT_FOUND->getFriendlyName(),
+        Codes::UNAUTHENTICATED_USER->value => Codes::UNAUTHENTICATED_USER->getFriendlyName(),
+        Codes::FORBIDDEN_RESOURCE->value => Codes::FORBIDDEN_RESOURCE->getFriendlyName(),
+        Codes::RESOURCE_NOT_FOUND->value => Codes::RESOURCE_NOT_FOUND->getFriendlyName(),
         Codes::VALIDATION_ERRORS->value => Codes::VALIDATION_ERRORS->getFriendlyName(),
-        Codes::FAILED->value => Codes::FAILED->getFriendlyName(),
+        Codes::SERVER_ERROR->value => Codes::SERVER_ERROR->getFriendlyName(),
         Codes::MAINTENANCE->value => Codes::MAINTENANCE->getFriendlyName(),
     ],
 ];

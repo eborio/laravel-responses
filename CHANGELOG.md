@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release v1.2.1
+
+Release date: 2025-09-19
+
+### Fixed
+- Corrected enum case names in configuration file (UNAUTHENTICATED_USER, FORBIDDEN_RESOURCE, RESOURCE_NOT_FOUND, SERVER_ERROR)
+
+### Added
+- Comprehensive documentation suite in `docs/` directory
+- Installation guide, usage examples, API reference, testing guide, and contribution guidelines
+- Updated README.md as documentation index
+
+### Changed
+- Improved documentation structure and organization
+- Enhanced developer experience with detailed guides and examples
+
+### Integrity
+Tag: `v1.2.1`
+
 ## Release v1.2.0
 
 Release date: 2025-09-19
