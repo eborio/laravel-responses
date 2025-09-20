@@ -10,8 +10,10 @@ use Illuminate\Http\JsonResponse;
  * Class Responses
  *
  * Build standardized JSON API responses that implement the Laravel
- * Responsible contract. The response payload follows the package
+ * Responsable contract. The response payload follows the package
  * convention: [status, code, message, data].
+ *
+ * @package Eborio\LaravelResponses
  */
 class Responses implements Responsable
 {
@@ -69,45 +71,45 @@ class Responses implements Responsable
      * Create a server error response instance.
      *
      * This returns a {@see Responses} pre-configured with the
-     * {@see Codes::FAILED} HTTP code.
+     * {@see Codes::SERVER_ERROR} HTTP code.
      *
      * @param array $data Optional payload data
      * @param string $message Optional message
      * @return static A Responses instance configured as an error
      */
-    public static function failed(array $data = [], string $message = 'Server error'): static
+    public static function failed(array $data = [], string $message = ''): static
     {
-        return new static(Codes::FAILED, $data, $message);
+        return new static(Codes::SERVER_ERROR, $data, $message);
     }
 
     /**
      * Create a forbidden response instance.
      *
      * Returns a {@see Responses} configured with the
-     * {@see Codes::FORBIDDEN} status.
+     * {@see Codes::FORBIDDEN_RESOURCE} status.
      *
      * @param array $data Optional payload data
      * @param string $message Optional message
      * @return static A Responses instance configured as forbidden
      */
-    public static function forbidden(array $data = [], string $message = 'Forbidden resource'): static
+    public static function forbidden(array $data = [], string $message = ''): static
     {
-        return new static(Codes::FORBIDDEN, $data, $message);
+        return new static(Codes::FORBIDDEN_RESOURCE, $data, $message);
     }
 
     /**
      * Create a not found response instance.
      *
      * Returns a {@see Responses} configured with the
-     * {@see Codes::NOT_FOUND} status.
+     * {@see Codes::RESOURCE_NOT_FOUND} status.
      *
      * @param array $data Optional payload data
      * @param string $message Optional message
      * @return static A Responses instance configured as not found
      */
-    public static function notFound(array $data = [], string $message = 'Item not found'): static
+    public static function notFound(array $data = [], string $message = ''): static
     {
-        return new static(Codes::NOT_FOUND, $data, $message);
+        return new static(Codes::RESOURCE_NOT_FOUND, $data, $message);
     }
 
     /**
@@ -179,15 +181,15 @@ class Responses implements Responsable
      * Create an unauthenticated response instance.
      *
      * Returns a {@see Responses} configured with the
-     * {@see Codes::UNAUTHENTICATED} status.
+     * {@see Codes::UNAUTHENTICATED_USER} status.
      *
      * @param array $data Optional payload data
      * @param string $message Optional message
      * @return static A Responses instance configured as unauthenticated
      */
-    public static function unauthenticated(array $data = [], string $message = 'Unauthenticated user'): static
+    public static function unauthenticated(array $data = [], string $message = ''): static
     {
-        return new static(Codes::UNAUTHENTICATED, $data, $message);
+        return new static(Codes::UNAUTHENTICATED_USER, $data, $message);
     }
 
     /**
@@ -201,7 +203,7 @@ class Responses implements Responsable
      * @param string $message Optional message title
      * @return static A Responses instance configured for validation errors
      */
-    public static function validationErrors(array $data = [], string $message = 'Incomplete form'): static
+    public static function validationErrors(array $data = [], string $message = ''): static
     {
         return new static(Codes::VALIDATION_ERRORS, $data, $message);
     }

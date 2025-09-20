@@ -6,6 +6,8 @@ namespace Eborio\LaravelResponses\Enums;
  * HTTP status codes used by the responses package.
  *
  * Each enum case maps to the numeric HTTP status code returned in responses.
+ *
+ * @package Eborio\LaravelResponses\Enums
  */
 enum Codes: int
 {
@@ -13,19 +15,19 @@ enum Codes: int
     case OK = 200;
 
     /** Authentication required or invalid credentials. */
-    case UNAUTHENTICATED = 401;
+    case UNAUTHENTICATED_USER = 401;
 
     /** Authenticated but not authorized to access resource. */
-    case FORBIDDEN = 403;
+    case FORBIDDEN_RESOURCE = 403;
 
     /** Resource not found. */
-    case NOT_FOUND = 404;
+    case RESOURCE_NOT_FOUND = 404;
 
     /** Validation failed for the provided input. */
     case VALIDATION_ERRORS = 422;
 
     /** Internal server error. */
-    case FAILED = 500;
+    case SERVER_ERROR = 500;
 
     /** Service unavailable due to maintenance or overload. */
     case MAINTENANCE = 503;
@@ -33,8 +35,8 @@ enum Codes: int
     /**
      * Map an arbitrary HTTP code to a semantic Status enum.
      *
-     * @param int $code
-     * @return Status
+     * @param int $code HTTP status code
+     * @return Status Corresponding semantic status
      */
     public static function statusFromHttpCode(int $code): Status
     {
@@ -52,7 +54,7 @@ enum Codes: int
     /**
      * Instance helper: map this enum case to a semantic Status.
      *
-     * @return Status
+     * @return Status Corresponding semantic status for this code
      */
     public function toStatus(): Status
     {

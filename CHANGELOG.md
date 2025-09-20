@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release v1.2.0
+
+Release date: 2025-09-19
+
+### Added
+- Comprehensive test suite achieving 100% code coverage (40 tests, 58 assertions)
+- Tests for all public methods, constructor variations, and edge cases in Responses class
+- Tests for all enum methods and HTTP code mappings in Codes class
+
+### Changed
+- Updated PHPDocBlocks in Codes.php and Responses.php for improved documentation and type safety
+- Enhanced test coverage to include reflection-based testing for protected methods
+
+### Integrity
+Tag: `v1.2.0`
+
 ## Release v1.1.0
 
 Release date: 2025-08-25
