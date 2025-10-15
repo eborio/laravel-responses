@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## Release v1.3.0
+
+Release date: 2025-10-15
+
+### Added
+- Added `getData()` and `getStatusCode()` methods to Responses class for JsonResponse compatibility in tests
+- Methods reordered alphabetically in Responses class
+
+### Changed
+- Updated API reference documentation to include new methods
+
+### Integrity
+Tag: `v1.3.0`
+
 ## Release v1.2.1
 
 Release date: 2025-09-19

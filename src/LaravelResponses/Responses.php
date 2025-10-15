@@ -98,6 +98,29 @@ class Responses implements Responsable
     }
 
     /**
+     * Get the response data.
+     *
+     * Returns the full response payload array.
+     *
+     * @param bool $assoc Whether to return as associative array (unused for compatibility)
+     * @return array The full payload
+     */
+    public function getData($assoc = false): array
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * Get the HTTP status code.
+     *
+     * @return int The HTTP status code
+     */
+    public function getStatusCode(): int
+    {
+        return $this->httpCode->value;
+    }
+
+    /**
      * Create a not found response instance.
      *
      * Returns a {@see Responses} configured with the

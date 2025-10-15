@@ -155,4 +155,32 @@ class ResponsesTest extends TestCase
         $payload = json_decode($response->getContent(), true);
         $this->assertSame(['test' => 'data'], $payload['data']);
     }
+
+    public function test_getData_returns_full_payload()
+    {
+        $response = new Responses(Codes::OK, ['test' => 'data'], 'Test message');
+        $data = $response->getData();
+
+        $this->assertIsArray($data);
+        $this->assertArrayHasKey('status', $data);
+        $this->assertArrayHasKey('code', $data);
+        $this->assertArrayHasKey('message', $data);
+        $this->assertArrayHasKey('data', $data);
+        $this->assertEquals('OK', $data['status']);
+        $this->assertEquals(200, $data['code']);
+        $this->assertEquals('Test message', $data['message']);
+        $this->assertEquals(['test' => 'data'], $data['data']);
+    }
+
+    public function test_getStatusCode_returns_http_code()
+    {
+        $response = Responses::ok(['test' => 'data']);
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $response404 = Responses::notFound();
+        $this->assertEquals(404, $response404->getStatusCode());
+
+        $response500 = Responses::failed();
+        $this->assertEquals(500, $response500->getStatusCode());
+    }
 }

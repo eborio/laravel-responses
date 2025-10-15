@@ -103,6 +103,33 @@ Responses::validationErrors($validator->errors()->toArray());
 
 #### Instance Methods
 
+##### `getData(bool $assoc = false): array`
+
+Returns the full response payload as an array.
+
+**Parameters:**
+- `$assoc` (bool): Whether to return as associative array (unused for compatibility)
+
+**Returns:** array - The full payload
+
+**Example:**
+```php
+$response = Responses::ok(['user' => $user]);
+$data = $response->getData(); // Returns ['status' => 'OK', 'code' => 200, 'message' => 'Ok', 'data' => ['user' => $user]]
+```
+
+##### `getStatusCode(): int`
+
+Returns the HTTP status code of the response.
+
+**Returns:** int - The HTTP status code
+
+**Example:**
+```php
+$response = Responses::ok(['user' => $user]);
+$code = $response->getStatusCode(); // Returns 200
+```
+
 ##### `toResponse($request): JsonResponse`
 
 Converts the response to a Laravel JsonResponse.
